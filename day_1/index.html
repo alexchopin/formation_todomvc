@@ -12,32 +12,32 @@
 		<section class="todoapp">
 			<header class="header">
 				<h1>todos</h1>
-				<input class="new-todo" autofocus autocomplete="off" placeholder="What needs to be done?">
+				<input class="new-todo" v-model.trim="newTodo" @keyup.enter="save" autofocus autocomplete="off" placeholder="What needs to be done?">
 			</header>
 			<section class="main">
-				<input id="toggle-all" class="toggle-all" type="checkbox">
+				<input id="toggle-all" class="toggle-all" v-model="toggleAll" type="checkbox">
 				<label for="toggle-all">Mark all as complete</label>
 				<ul class="todo-list">
-					<li class="todo" class="completed editing">
+					<li class="todo" v-for="todo in filteredTodos" :class="{completed: todo.completed, editing: copiedTodo && copiedTodo.id === todo.id}">
 						<div class="view">
-							<input class="toggle" type="checkbox">
-							<label>label</label>
-							<button class="destroy"></button>
+							<input class="toggle" v-model="todo.completed" type="checkbox">
+							<label @dblclick="copiedTodo = Object.assign({}, todo)">{{ todo.name }}</label>
+							<button class="destroy" @click="deleteByID(todo.id)"></button>
 						</div>
-						<input class="edit" type="text"/>
+						<input class="edit" v-focus v-model.trim="todo.name" @keyup.enter="edit(todo)" @blur="edit(todo)" @keyup.esc="escape(todo)" type="text"/>
 					</li>
 				</ul>
 			</section>
 			<footer class="footer">
 				<span class="todo-count">
-					<strong>0 item</strong> left
+					<strong>{{ activeTodos.length }} item{{ activeTodos.length > 1 ? 's' : ''}}</strong> left
 				</span>
 				<ul class="filters">
-					<li><a href="#/all" class="selected">All</a></li>
-					<li><a href="#/active" class="selected">Active</a></li>
-					<li><a href="#/completed" class="selected">Completed</a></li>
+					<li><a href="#/all" @click.prevent="filter = 'all'" v-bind:class="{selected: filter === 'all'}">All</a></li>
+					<li><a href="#/active" @click.prevent="filter = 'active'" v-bind:class="{selected: filter === 'active'}">Active</a></li>
+					<li><a href="#/completed" @click.prevent="filter = 'completed'" v-bind:class="{selected: filter === 'completed'}">Completed</a></li>
 				</ul>
-				<button class="clear-completed">
+				<button v-if="completedTodos.length" @click="todos = activeTodos" class="clear-completed">
 					Clear completed
 				</button>
 			</footer>
@@ -50,7 +50,76 @@
     var vm = new Vue({
 			el: '#todomvc',
       data: {
-      }
+				todos: [],
+				newTodo: '',
+				filter: 'all',
+				copiedTodo: null
+      },
+			computed: {
+				toggleAll: {
+					get: function () {
+						return this.activeTodos.length === 0
+					},
+					set: function (value) {
+						this.todos.forEach(function (todo) {
+							todo.completed = value
+						})
+					}
+				},
+				filteredTodos: function () {
+					if (this.filter === 'active') {
+						return this.activeTodos
+					} else if (this.filter === 'completed') {
+						return this.completedTodos
+					} else {
+						return this.todos
+					}
+				},
+				activeTodos: function () {
+					return this.todos.filter(function (todo) {
+						return todo.completed === false
+					})
+				},
+				completedTodos: function () {
+					return this.todos.filter(function (todo) {
+						return todo.completed === true
+					})
+				}
+			},
+			methods: {
+				save: function () {
+					if (this.newTodo.length) {
+						this.todos.push({
+							id: Date.now(),
+							name: this.newTodo,
+							completed: false
+						})
+						this.newTodo = ''
+					}
+				},
+				edit: function (todo) {
+					if (todo.name.length === 0) {
+						this.deleteByID(todo.id)
+					}
+					this.copiedTodo = null
+				},
+				escape: function (todo) {
+					todo.name = this.copiedTodo.name
+					this.copiedTodo = null
+				},
+				deleteByID: function (id) {
+					this.todos = this.todos.filter(function (todo) {
+						return todo.id !== id
+					})
+				}
+			},
+			directives: {
+				focus: {
+					update: function (el) {
+						el.focus()
+					}
+				}
+			}
     })
   </script>
 </body>
