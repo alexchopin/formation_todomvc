@@ -1,0 +1,57 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>TODOMVC</title>
+  <link rel="stylesheet" href="main.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+  <div id="todomvc">
+		<section class="todoapp">
+			<header class="header">
+				<h1>todos</h1>
+				<input class="new-todo" autofocus autocomplete="off" placeholder="What needs to be done?">
+			</header>
+			<section class="main">
+				<input id="toggle-all" class="toggle-all" type="checkbox">
+				<label for="toggle-all">Mark all as complete</label>
+				<ul class="todo-list">
+					<li class="todo" class="completed editing">
+						<div class="view">
+							<input class="toggle" type="checkbox">
+							<label>label</label>
+							<button class="destroy"></button>
+						</div>
+						<input class="edit" type="text"/>
+					</li>
+				</ul>
+			</section>
+			<footer class="footer">
+				<span class="todo-count">
+					<strong>0 item</strong> left
+				</span>
+				<ul class="filters">
+					<li><a href="#/all" class="selected">All</a></li>
+					<li><a href="#/active" class="selected">Active</a></li>
+					<li><a href="#/completed" class="selected">Completed</a></li>
+				</ul>
+				<button class="clear-completed">
+					Clear completed
+				</button>
+			</footer>
+		</section>
+		<footer class="info">
+			<p>Double-click to edit a todo</p>
+		</footer>
+	</div>
+  <script>
+    var vm = new Vue({
+			el: '#todomvc',
+      data: {
+      }
+    })
+  </script>
+</body>
+</html>
