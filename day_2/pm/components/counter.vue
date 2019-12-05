@@ -1,9 +1,9 @@
 <template>
   <div>
     <h2>Plus ou moins? De 0 à 1 000!</h2>
-    <p>{{ message }}</p>
-    <b-form-input type="number" v-model="guess" @keyup.enter="find"></b-form-input>
-    <button v-if="reset" @click="secret = Math.floor((Math.random() * 1000) + 1)">Reset</button>
+    <p>{{ game.message }}</p>
+    <b-form-input type="number" v-model="game.guess" @keyup.enter="find"></b-form-input>
+    <b-button v-if="reset" @click="play">Rejouer</b-button>
   </div>
 </template>
 
@@ -11,20 +11,29 @@
 export default {
   data () {
     return {
-      secret: Math.floor((Math.random() * 1000) + 1),
-      guess: 0,
-      message: '',
+      game: {
+        secret: Math.floor((Math.random() * 1000) + 1),
+        guess: 0,
+        message: ''
+      },
       reset: false
     }
   },
   methods: {
+    play () {
+      this.game = {
+        secret: Math.floor((Math.random() * 1000) + 1),
+        message: '',
+        guess: 0
+      }
+    },
     find () {
-      if (this.guess > this.secret) {
-        this.message = "C'est moins!"
-      } else if (this.guess < this.secret) {
-        this.message = "C'est plus!"
+      if (this.game.guess > this.game.secret) {
+        this.game.message = "C'est moins!"
+      } else if (this.game.guess < this.game.secret) {
+        this.game.message = "C'est plus!"
       } else {
-        this.message = "Gagné!"
+        this.game.message = "Gagné!"
         this.reset = true
       }
     }
