@@ -1,0 +1,165 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>TODOMVC</title>
+  <link rel="stylesheet" href="main.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+  <div id="todomvc">
+		<section class="todoapp">
+			<todo-header title="Hello" @add-todo="todos.push($event)"></todo-header>
+			<section class="main">
+				<input id="toggle-all" class="toggle-all" v-model="toggleAll" type="checkbox">
+				<label for="toggle-all">Mark all as complete</label>
+				<ul class="todo-list">
+					<li class="todo" v-for="todo in filteredTodos" :class="{completed: todo.completed, editing: copiedTodo && copiedTodo.id === todo.id}">
+						<div class="view">
+							<input class="toggle" v-model="todo.completed" type="checkbox">
+							<label @dblclick="copiedTodo = Object.assign({}, todo)">{{ todo.name }}</label>
+							<button class="destroy" @click="deleteByID(todo.id)"></button>
+						</div>
+						<input class="edit" v-focus v-model.trim="todo.name" @keyup.enter="edit(todo)" @blur="edit(todo)" @keyup.esc="escape(todo)" type="text"/>
+					</li>
+				</ul>
+			</section>
+			<footer class="footer">
+				<todo-count :nb="activeTodos.length"></todo-count>
+				<todo-filters :filter.sync="filter" :list="['all', 'active', 'completed']"></todo-filters>
+				<button v-if="completedTodos.length" @click="todos = activeTodos" class="clear-completed">
+					Clear completed
+				</button>
+			</footer>
+		</section>
+		<footer class="info">
+			<p>Double-click to edit a todo</p>
+		</footer>
+	</div>
+  <script>
+		Vue.component('todo', {
+			props: ['todo'],
+			template: `
+				<li class="todo" :class="{completed: todo.completed, editing: copiedTodo && copiedTodo.id === todo.id}">
+					<div class="view">
+						<input class="toggle" v-model="todo.completed" type="checkbox">
+						<label @dblclick="copiedTodo = Object.assign({}, todo)">{{ todo.name }}</label>
+						<button class="destroy" @click="deleteByID(todo.id)"></button>
+					</div>
+					<input class="edit" v-focus v-model.trim="todo.name" @keyup.enter="edit(todo)" @blur="edit(todo)" @keyup.esc="escape(todo)" type="text"/>
+				</li>
+			`
+		})
+		Vue.component('todo-filters', {
+			props: ['filter', 'list'],
+			template: `
+				<ul class="filters">
+					<li v-for="etat in list">
+						<a :href="'#/'+ 'etat'" @click.prevent="$emit('update:filter', etat)" v-bind:class="{selected: filter === etat}">
+							{{ etat }}
+						</a>
+					</li>
+				</ul>
+			`
+		})
+		Vue.component('todo-count', {
+			props: ['nb'],
+			template: `
+				<span class="todo-count">
+					<strong>{{ nb }} item{{ nb > 1 ? 's' : ''}}</strong> left
+				</span>
+			`
+		})
+		Vue.component('todo-header', {
+			props: ['title'],
+			template: `
+				<header class="header">
+					<h1>{{ title }}</h1>
+					<input class="new-todo" v-model.trim="newTodo" @keyup.enter="save" autofocus autocomplete="off" placeholder="What needs to be done?">
+				</header>
+			`,
+			data: function () {
+				return {
+					newTodo: ''
+				}
+			},
+			methods: {
+				save: function () {
+					if (this.newTodo.length) {
+						this.$emit('add-todo', {
+							id: Date.now(),
+							name: this.newTodo,
+							completed: false
+						})
+						this.newTodo = ''
+					}
+				}
+			}
+		})
+    var vm = new Vue({
+			el: '#todomvc',
+      data: {
+				todos: [],
+				filter: 'all',
+				copiedTodo: null
+      },
+			computed: {
+				toggleAll: {
+					get: function () {
+						return this.activeTodos.length === 0
+					},
+					set: function (value) {
+						this.todos.forEach(function (todo) {
+							todo.completed = value
+						})
+					}
+				},
+				filteredTodos: function () {
+					if (this.filter === 'active') {
+						return this.activeTodos
+					} else if (this.filter === 'completed') {
+						return this.completedTodos
+					} else {
+						return this.todos
+					}
+				},
+				activeTodos: function () {
+					return this.todos.filter(function (todo) {
+						return todo.completed === false
+					})
+				},
+				completedTodos: function () {
+					return this.todos.filter(function (todo) {
+						return todo.completed === true
+					})
+				}
+			},
+			methods: {
+				edit: function (todo) {
+					if (todo.name.length === 0) {
+						this.deleteByID(todo.id)
+					}
+					this.copiedTodo = null
+				},
+				escape: function (todo) {
+					todo.name = this.copiedTodo.name
+					this.copiedTodo = null
+				},
+				deleteByID: function (id) {
+					this.todos = this.todos.filter(function (todo) {
+						return todo.id !== id
+					})
+				}
+			},
+			directives: {
+				focus: {
+					update: function (el) {
+						el.focus()
+					}
+				}
+			}
+    })
+  </script>
+</body>
+</html>
