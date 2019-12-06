@@ -1,0 +1,20 @@
+[
+  {
+    "type": "input_text",
+    "label": "Nom",
+    "validator": {
+      "required": true,
+      "max_length": 20
+    }
+  },
+  {
+    "type": "select",
+    "label": "Ville",
+    "options": [
+      "Bordeaux", "Paris", "Lyon", "Toulouse", "Marseille", "Rennes"
+    ],
+    "validator": {
+      "required": true
+    }
+  }
+]
