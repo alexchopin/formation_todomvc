@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nuxtjs/axios": "^5.8.0",
     "bootstrap-vue": "^2.1.0",
     "nuxt": "^2.10.2"
   }
