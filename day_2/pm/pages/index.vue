@@ -1,6 +1,5 @@
 <template>
   <b-container>
-    <nuxt-link to="/users">Users</nuxt-link>
     <counter></counter>
   </b-container>
 </template>

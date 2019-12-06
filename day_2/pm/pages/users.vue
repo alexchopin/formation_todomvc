@@ -1,7 +1,6 @@
 <template>
   <b-container>
     <h1>Users</h1>
-    <nuxt-link to="/">Accueil</nuxt-link>
     <ul>
       <li v-for="user in users" :key="user.id">
         <nuxt-link :to="'/users/' + user.id">
@@ -13,7 +12,6 @@
     <nuxt-child></nuxt-child>
   </b-container>
 </template>
-
 
 <script>
 export default {

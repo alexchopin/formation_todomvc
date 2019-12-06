@@ -5,5 +5,8 @@ export default {
   },
   proxy: {
     '/api': 'https://jsonplaceholder.typicode.com'
+  },
+  head: {
+    title: 'App du jour'
   }
 }

@@ -17,6 +17,11 @@ export default {
     return {
       user
     }
+  },
+  head () {
+    return {
+      title: this.user.name
+    }
   }
 }
 </script>
