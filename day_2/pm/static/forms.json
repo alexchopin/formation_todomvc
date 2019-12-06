@@ -4,7 +4,7 @@
     "label": "Nom",
     "validator": {
       "required": true,
-      "max_length": 20
+      "maxlength": 20
     }
   },
   {
